@@ -7,7 +7,7 @@ cur = con.cursor()
 
 cur.execute('CREATE TABLE Customers(ID, Name, Road, HouseNumber, PostCode, Town);')
 cur.execute('CREATE TABLE Products(ProductNumber, Name, Description, Price)')
-cur.execute('CREATE TABLE Orders(OrderNumber, Cost, Status);')
+cur.execute('CREATE TABLE Orders(OrderNumber, CustomerID, Cost, Status);')
 
 cur.close()
 con.commit()
