@@ -4,16 +4,16 @@ import sqlite3
 
 
 def convert_list_for_insertion(items):
-    '''utility function to properly quote the strings and combine them'''
+    '''utility function to properly quote the strings'''
     stringified_items = []
     for item in items:
         if type(item) == str:
-            conv = f"'{str(item)}'"
+            conv = f'"{str(item)}"'
             stringified_items.append(conv)
         elif type(item) in [int, float]:
             stringified_items.append(str(item))
 
-    return ', '.join(stringified_items)
+    return stringified_items
 
 
 def create_customer(connection, **kwargs):
@@ -35,7 +35,7 @@ def create_customer(connection, **kwargs):
     if id_max is None:          # Handle creation of first customer
         id_max = 0              # he'll get ID 1
     values.insert(0, id_max + 1)
-    value_string = convert_list_for_insertion(values)
+    value_string = ', '.join(convert_list_for_insertion(values))
     cursor.execute(f'INSERT INTO Customers({key_string}) VALUES({value_string})')
     connection.commit()
 
@@ -52,15 +52,23 @@ def search_customers(connection, logic='and', **kwargs):
 
     logic = logic.upper()
 
-    
+    # form column=value pairs
 
-    return None
+    stringified_values = convert_list_for_insertion(kwargs.values())
+    pairs = [f'{k}={v}' for k, v in zip(kwargs.keys(), stringified_values)]
+    pairs = f' {logic} '.join(pairs)
+
+    cursor = connection.cursor()
+    result = cursor.execute(f'SELECT ID FROM Customers WHERE {pairs}')
+
+    return [item[0] for item in result.fetchall()]
 
 
 if __name__ == '__main__':
     con = sqlite3.connect('database.db')
-    create_customer(con, Name='Erika Mustermann', Road='Zum Beispiel',
-                    HouseNumber=1, PostCode=42838, Town='Bielefeld')
-    create_customer(con, Name='Hans Wurst', PostCode=27895, Town='Irgendwo')
+    # create_customer(con, Name='Erika Mustermann', Road='Zum Beispiel',
+    #                 HouseNumber=1, PostCode=42838, Town='Bielefeld')
+    # create_customer(con, Name='Hans Wurst', PostCode=27895, Town='Irgendwo')
     # create_customer()
+    print(search_customers(con, logic='or', Town='Irgendwo', HouseNumber=1))
     con.close()
