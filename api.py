@@ -64,11 +64,28 @@ def search_customers(connection, logic='and', **kwargs):
     return [item[0] for item in result.fetchall()]
 
 
+def add_product(connection, Name, Description, Price):
+    '''enter a new product into the database'''
+
+    cursor = connection.cursor()
+    id_max = cursor.execute('SELECT MAX(ProductNumber) FROM Products').fetchone()[0]
+    if id_max is None:
+        id_max = 0
+    values = [id_max + 1, Name, Description, Price]
+    value_string = ', '.join(convert_list_for_insertion(values))
+    cursor.execute(f'INSERT INTO Products VALUES({value_string})')
+    connection.commit()
+    return
+
+
 if __name__ == '__main__':
     con = sqlite3.connect('database.db')
     # create_customer(con, Name='Erika Mustermann', Road='Zum Beispiel',
     #                 HouseNumber=1, PostCode=42838, Town='Bielefeld')
     # create_customer(con, Name='Hans Wurst', PostCode=27895, Town='Irgendwo')
     # create_customer()
-    print(search_customers(con, logic='or', Town='Irgendwo', HouseNumber=1))
+    # create_customer(con, Name='Otto Normalbürger', Road='Standardstraße', HouseNumber=2, PostCode=84901, Town='DINslaken')
+    # print(search_customers(con, logic='or', Town='Irgendwo', HouseNumber=1))
+    add_product(con, Name='Popel', Description='süß und saftig', Price=1.8)
+    add_product(con, Name='Taschentuch', Description='sanft und sicher, 10 Stück je Packung', Price=0.3)
     con.close()
