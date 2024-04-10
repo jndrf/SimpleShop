@@ -1,0 +1,16 @@
+#+TITLE: SimpleShop: Backend Library for a tiny online shop
+
+~~SimpleShop~~ is a small library implementing the backend for a hypothetical shop.
+This is a toy project to refresh my SQL and therefore obviously missing features required for a real shop.
+
+The script ~~create_database.py~~ will create an SQLite database named ~~database.db~~ with the required format.
+~~api.py~~ defines functions to add new customers and products to the database, as well as to search for customers (based e.g. on name) and to record new orders.
+
+Running ~~api.py~~ will insert a few customers and products into the database as well as place an order.
+
+Documentation is inside the source code.
+
+* Requirements
+  Python 3.
+  This program only uses the standard library, thus has no other dependencies.
+  It was developed using Python 3.12.2, though it should also run under older versions.
